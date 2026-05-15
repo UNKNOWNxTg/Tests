@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Generator - Ultra Modern Platform</title>
+    
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Alpine.js for reactivity -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --primary-dark: #7c3aed;
+            --secondary: #06b6d4;
+            --accent: #f472b6;
+            --bg-dark: #0f0f1a;
+            --bg-card: rgba(23, 23, 43, 0.8);
+            --border-glow: rgba(139, 92, 246, 0.3);
+        }
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        body {
+            background: var(--bg-dark);
+            background-image: 
+                radial-gradient(at 20% 20%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 80% 80%, rgba(6, 182, 212, 0.15) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(244, 114, 182, 0.1) 0px, transparent 50%);
+            min-height: 100vh;
+        }
+        
+        /* Glassmorphism */
+        .glass {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .glass-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card:hover {
+            border-color: var(--border-glow);
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Animated Glow Button */
+        .glow-btn {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .glow-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .glow-btn:hover::before {
+            left: 100%;
+        }
+        
+        .glow-btn:hover {
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
+        }
+        
+        /* Loading Animation */
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        .pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .spin-slow {
+            animation: spin-slow 3s linear infinite;
+        }
+        
+        /* Masonry Grid */
+        .masonry-grid {
+            column-count: 1;
+            column-gap: 1rem;
+        }
+        
+        @media (min-width: 640px) {
+            .masonry-grid { column-count: 2; }
+        }
+        
+        @media (min-width: 1024px) {
+            .masonry-grid { column-count: 3; }
+        }
+        
+        @media (min-width: 1280px) {
+            .masonry-grid { column-count: 4; }
+        }
+        
+        .masonry-item {
+            break-inside: avoid;
+            margin-bottom: 1rem;
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+        
+        /* Floating Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        /* Progress Bar */
+        .progress-bar {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        /* Toast Notifications */
+        .toast-enter {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        
+        .toast-enter-active {
+            transform: translateX(0);
+            opacity: 1;
+            transition: all 0.3s ease;
+        }
+        
+        .toast-exit {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        .toast-exit-active {
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="text-white antialiased" x-data="app()" x-init="init()">
+    
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold gradient-text">AI Image Generator</span>
+                </div>
+                
+                <!-- Nav -->
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="#generate" class="text-gray-300 hover:text-white transition">Generate</a>
+                    <a href="#gallery" class="text-gray-300 hover:text-white transition">Gallery</a>
+                    <a href="#models" class="text-gray-300 hover:text-white transition">Models</a>
+                    <button @click="showHistory = true" class="text-gray-300 hover:text-white transition">History</a>
+                </nav>
+                
+                <!-- Stats -->
+                <div class="flex items-center space-x-4">
+                    <div class="hidden sm:flex items-center space-x-2 text-sm text-gray-400">
+                        <span class="w-2 h-2 bg-green-500 rounded-full pulse-glow"></span>
+                        <span x-text="stats.onlineUsers + ' online'"></span>
+                    </div>
+                    <a href="https://t.me/yourbot" target="_blank" class="glow-btn px-4 py-2 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-lg font-medium text-sm">
+                        Telegram Bot
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="pt-24 pb-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Hero Section -->
+            <section class="text-center mb-16">
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
+                    Create Stunning AI Art<br>
+                    <span class="gradient-text">In Seconds</span>
+                </h1>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
+                    Transform your imagination into breathtaking visuals with our ultra-fast AI image generation platform. Powered by cutting-edge models.
+                </p>
+            </section>
+            
+            <!-- Generator Section -->
+            <section id="generate" class="mb-16">
+                <div class="glass-card p-6 lg:p-8">
+                    <div class="grid lg:grid-cols-2 gap-8">
+                        
+                        <!-- Input Panel -->
+                        <div class="space-y-6">
+                            <!-- Prompt Input -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">
+                                    ✨ Prompt
+                                </label>
+                                <textarea 
+                                    x-model="prompt"
+                                    @keydown.ctrl.enter="generateImage()"
+                                    rows="4"
+                                    placeholder="Describe what you want to see... Be detailed for best results!"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition resize-none"
+                                ></textarea>
+                                <div class="flex items-center justify-between mt-2">
+                                    <button @click="randomPrompt()" class="text-xs text-purple-400 hover:text-purple-300 transition">
+                                        🎲 Random Prompt
+                                    </button>
+                                    <span class="text-xs text-gray-500 mono" x-text="prompt.length + '/2000'"></span>
+                                </div>
+                            </div>
+                            
+                            <!-- Negative Prompt -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">
+                                    🚫 Negative Prompt (Optional)
+                                </label>
+                                <input 
+                                    type="text"
+                                    x-model="negativePrompt"
+                                    placeholder="What to exclude..."
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition"
+                                />
+                            </div>
+                            
+                            <!-- Settings Row 1 -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <!-- Model Select -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                                        🤖 Model
+                                    </label>
+                                    <select 
+                                        x-model="model"
+                                        class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-purple-500 transition appearance-none"
+                                    >
+                                        <option value="flux">Flux (Default)</option>
+                                        <option value="flux-realism">Flux Realism</option>
+                                        <option value="any-dark">Any Dark</option>
+                                        <option value="midjourney">Midjourney Style</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Aspect Ratio -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                                        📐 Aspect Ratio
+                                    </label>
+                                    <select 
+                                        x-model="aspectRatio"
+                                        @change="updateDimensions()"
+                                        class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-purple-500 transition appearance-none"
+                                    >
+                                        <option value="1:1">Square (1:1)</option>
+                                        <option value="16:9">Landscape (16:9)</option>
+                                        <option value="9:16">Portrait (9:16)</option>
+                                        <option value="4:3">Classic (4:3)</option>
+                                        <option value="3:4">Vertical (3:4)</option>
+                                        <option value="21:9">Ultrawide (21:9)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Settings Row 2 -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <!-- Width -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                                        Width: <span x-text="width" class="text-purple-400"></span>px
+                                    </label>
+                                    <input 
+                                        type="range"
+                                        x-model="width"
+                                        min="256"
+                                        max="2048"
+                                        step="64"
+                                        class="w-full accent-purple-500"
+                                    />
+                                </div>
+                                
+                                <!-- Height -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                                        Height: <span x-text="height" class="text-purple-400"></span>px
+                                    </label>
+                                    <input 
+                                        type="range"
+                                        x-model="height"
+                                        min="256"
+                                        max="2048"
+                                        step="64"
+                                        class="w-full accent-purple-500"
+                                    />
+                                </div>
+                            </div>
+                            
+                            <!-- Seed -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">
+                                    🌱 Seed (Optional)
+                                </label>
+                                <div class="flex space-x-2">
+                                    <input 
+                                        type="number"
+                                        x-model="seed"
+                                        placeholder="Random if empty"
+                                        class="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-purple-500 transition"
+                                    />
+                                    <button 
+                                        @click="randomizeSeed()"
+                                        class="px-4 py-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition"
+                                        title="Random Seed"
+                                    >
+                                        🎲
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Generate Button -->
+                            <button 
+                                @click="generateImage()"
+                                :disabled="generating || !prompt.trim()"
+                                class="w-full glow-btn py-4 bg-gradient-to-r from-purple-600 via-purple-500 to-cyan-600 rounded-xl font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed transition"
+                            >
+                                <span x-show="!generating">🎨 Generate Image</span>
+                                <span x-show="generating">⏳ Generating...</span>
+                            </button>
+                            
+                            <!-- Keyboard Shortcut Hint -->
+                            <p class="text-center text-xs text-gray-500">
+                                ⌨️ Press <kbd class="px-2 py-1 bg-white/10 rounded">Ctrl</kbd> + <kbd class="px-2 py-1 bg-white/10 rounded">Enter</kbd> to generate
+                            </p>
+                        </div>
+                        
+                        <!-- Preview Panel -->
+                        <div class="relative">
+                            <div class="sticky top-24">
+                                <!-- Loading State -->
+                                <div x-show="generating" class="glass-card p-8 text-center">
+                                    <div class="w-20 h-20 mx-auto mb-4 relative">
+                                        <div class="absolute inset-0 border-4 border-purple-500/30 rounded-full"></div>
+                                        <div class="absolute inset-0 border-4 border-transparent border-t-purple-500 rounded-full spin-slow"></div>
+                                    </div>
+                                    <h3 class="text-lg font-semibold mb-2">Creating Your Masterpiece</h3>
+                                    <p class="text-gray-400 text-sm mb-4" x-text="generationStatus"></p>
+                                    
+                                    <!-- Progress Bar -->
+                                    <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                                        <div class="progress-bar h-full" :style="`width: ${progress}%`"></div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-2 mono" x-text="Math.round(progress) + '%'"></p>
+                                </div>
+                                
+                                <!-- Result Image -->
+                                <div x-show="!generating && currentImage" class="glass-card overflow-hidden">
+                                    <img 
+                                        :src="currentImage" 
+                                        alt="Generated image"
+                                        class="w-full h-auto"
+                                        loading="lazy"
+                                    />
+                                    
+                                    <!-- Action Buttons -->
+                                    <div class="p-4 flex flex-wrap gap-2">
+                                        <button @click="downloadImage()" class="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-sm font-medium transition">
+                                            📥 Download
+                                        </button>
+                                        <button @click="regenerate()" class="flex-1 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-medium transition">
+                                            🔄 Regenerate
+                                        </button>
+                                        <button @click="createVariation()" class="flex-1 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-medium transition">
+                                            🎭 Variation
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Empty State -->
+                                <div x-show="!generating && !currentImage" class="glass-card p-8 text-center">
+                                    <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-purple-500/20 to-cyan-500/20 flex items-center justify-center">
+                                        <svg class="w-10 h-10 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-lg font-semibold mb-2">Ready to Create</h3>
+                                    <p class="text-gray-400 text-sm">Enter your prompt and click Generate to create amazing AI art</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Gallery Section -->
+            <section id="gallery" class="mb-16">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold">🖼️ Community Gallery</h2>
+                    <div class="flex items-center space-x-2">
+                        <button @click="loadGallery()" class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm transition">
+                            🔄 Refresh
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="masonry-grid" id="galleryGrid">
+                    <!-- Gallery items will be loaded here -->
+                    <template x-for="item in gallery" :key="item.id">
+                        <div class="masonry-item glass-card overflow-hidden group">
+                            <img 
+                                :src="item.url" 
+                                :alt="item.prompt"
+                                class="w-full h-auto group-hover:scale-105 transition duration-300"
+                                loading="lazy"
+                            />
+                            <div class="p-3">
+                                <p class="text-sm text-gray-300 line-clamp-2" x-text="item.prompt"></p>
+                                <div class="flex items-center justify-between mt-2">
+                                    <span class="text-xs text-gray-500" x-text="item.model"></span>
+                                    <button @click="usePrompt(item.prompt)" class="text-xs text-purple-400 hover:text-purple-300">
+                                        Use Prompt
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                
+                <!-- Load More -->
+                <div class="text-center mt-8">
+                    <button @click="loadMore()" class="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl transition">
+                        Load More
+                    </button>
+                </div>
+            </section>
+            
+            <!-- Models Section -->
+            <section id="models" class="mb-16">
+                <h2 class="text-2xl font-bold mb-6">🤖 Available Models</h2>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <template x-for="modelItem in models" :key="modelItem.id">
+                        <div class="glass-card p-4">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center">
+                                    <span class="text-lg" x-text="modelItem.icon"></span>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold" x-text="modelItem.name"></h3>
+                                    <span class="text-xs text-gray-500" x-text="modelItem.speed"></span>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-400" x-text="modelItem.description"></p>
+                        </div>
+                    </template>
+                </div>
+            </section>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="border-t border-white/10 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="flex items-center space-x-2 mb-4 md:mb-0">
+                    <span class="text-gray-400 text-sm">© 2024 AI Image Generator</span>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition">API</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition">Documentation</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition">Terms</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition">Privacy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Toast Container -->
+    <div class="fixed bottom-4 right-4 z-50 space-y-2">
+        <template x-for="toast in toasts" :key="toast.id">
+            <div 
+                class="glass px-4 py-3 rounded-lg shadow-lg flex items-center space-x-2"
+                :class="{
+                    'border-green-500/50': toast.type === 'success',
+                    'border-red-500/50': toast.type === 'error',
+                    'border-yellow-500/50': toast.type === 'warning'
+                }"
+            >
+                <span x-text="toast.icon"></span>
+                <span class="text-sm" x-text="toast.message"></span>
+            </div>
+        </template>
+    </div>
+    
+    <!-- History Modal -->
+    <div x-show="showHistory" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display: none;">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" @click="showHistory = false"></div>
+        <div class="relative glass-card w-full max-w-4xl max-h-[80vh] overflow-hidden">
+            <div class="p-6 border-b border-white/10">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-bold">📜 Generation History</h2>
+                    <button @click="showHistory = false" class="text-gray-400 hover:text-white">✕</button>
+                </div>
+            </div>
+            <div class="p-6 overflow-y-auto max-h-[60vh]">
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    <template x-for="item in history" :key="item.id">
+                        <div class="glass-card overflow-hidden cursor-pointer hover:ring-2 hover:ring-purple-500 transition" @click="selectHistory(item)">
+                            <img :src="item.url" class="w-full h-32 object-cover">
+                            <p class="p-2 text-xs text-gray-400 truncate" x-text="item.prompt"></p>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function app() {
+            return {
+                // State
+                prompt: '',
+                negativePrompt: '',
+                model: 'flux',
+                aspectRatio: '1:1',
+                width: 1024,
+                height: 1024,
+                seed: null,
+                generating: false,
+                progress: 0,
+                generationStatus: 'Initializing...',
+                currentImage: null,
+                taskId: null,
+                showHistory: false,
+                
+                // Data
+                stats: {
+                    onlineUsers: 0,
+                    totalGenerations: 0,
+                },
+                gallery: [],
+                history: [],
+                models: [
+                    { id: 'flux', name: 'Flux', description: 'High-quality general purpose model', speed: 'Fast', icon: '⚡' },
+                    { id: 'flux-realism', name: 'Flux Realism', description: 'Photorealistic images', speed: 'Fast', icon: '📷' },
+                    { id: 'any-dark', name: 'Any Dark', description: 'Dark/moody aesthetic', speed: 'Medium', icon: '🌙' },
+                    { id: 'midjourney', name: 'Midjourney Style', description: 'Artistic Midjourney-like style', speed: 'Fast', icon: '🎨' },
+                ],
+                toasts: [],
+                
+                // Methods
+                init() {
+                    this.loadStats();
+                    this.loadGallery();
+                    this.startWebSocket();
+                    
+                    // Update stats periodically
+                    setInterval(() => this.loadStats(), 30000);
+                },
+                
+                async loadStats() {
+                    try {
+                        const response = await fetch('/api/v1/stats');
+                        const data = await response.json();
+                        this.stats.totalGenerations = data.image_generation?.total_requests || 0;
+                    } catch (e) {
+                        console.error('Failed to load stats:', e);
+                    }
+                },
+                
+                async loadGallery() {
+                    // Simulated gallery data - replace with actual API call
+                    this.gallery = [
+                        { id: 1, url: 'https://image.pollinations.ai/prompt/cyberpunk city neon night', prompt: 'Cyberpunk city at night with neon lights', model: 'flux' },
+                        { id: 2, url: 'https://image.pollinations.ai/prompt/fantasy landscape mountains', prompt: 'Fantasy landscape with mountains and waterfalls', model: 'flux' },
+                        { id: 3, url: 'https://image.pollinations.ai/prompt/portrait woman futuristic', prompt: 'Futuristic portrait of a woman', model: 'flux-realism' },
+                        { id: 4, url: 'https://image.pollinations.ai/prompt/space nebula colorful', prompt: 'Colorful space nebula', model: 'any-dark' },
+                    ];
+                },
+                
+                updateDimensions() {
+                    const ratios = {
+                        '1:1': [1024, 1024],
+                        '16:9': [1920, 1080],
+                        '9:16': [1080, 1920],
+                        '4:3': [1024, 768],
+                        '3:4': [768, 1024],
+                        '21:9': [2560, 1080],
+                    };
+                    const [w, h] = ratios[this.aspectRatio];
+                    this.width = w;
+                    this.height = h;
+                },
+                
+                randomPrompt() {
+                    const prompts = [
+                        'A mystical forest with glowing mushrooms and fairy lights',
+                        'Futuristic city skyline at sunset with flying cars',
+                        'Underwater civilization with bioluminescent creatures',
+                        'Ancient temple ruins overgrown with vegetation',
+                        'Space station orbiting a gas giant planet',
+                        'Steampunk airship sailing through clouds',
+                        'Magical library with floating books and spells',
+                        'Desert oasis with crystal clear water and palm trees',
+                    ];
+                    this.prompt = prompts[Math.floor(Math.random() * prompts.length)];
+                },
+                
+                randomizeSeed() {
+                    this.seed = Math.floor(Math.random() * 2147483647);
+                },
+                
+                async generateImage() {
+                    if (!this.prompt.trim()) {
+                        this.showToast('Please enter a prompt', '⚠️', 'warning');
+                        return;
+                    }
+                    
+                    this.generating = true;
+                    this.progress = 0;
+                    this.generationStatus = 'Starting generation...';
+                    
+                    try {
+                        const payload = {
+                            prompt: this.prompt,
+                            negative_prompt: this.negativePrompt || null,
+                            width: parseInt(this.width),
+                            height: parseInt(this.height),
+                            seed: this.seed ? parseInt(this.seed) : null,
+                            model: this.model,
+                        };
+                        
+                        // Start generation
+                        const response = await fetch('/api/v1/generate', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload),
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            this.taskId = data.task_id;
+                            this.generationStatus = 'Queued...';
+                            
+                            // Poll for progress
+                            await this.pollProgress();
+                        } else {
+                            throw new Error(data.detail || 'Generation failed');
+                        }
+                        
+                    } catch (error) {
+                        this.generating = false;
+                        this.showToast(error.message, '❌', 'error');
+                    }
+                },
+                
+                async pollProgress() {
+                    const maxAttempts = 60;
+                    let attempts = 0;
+                    
+                    while (attempts < maxAttempts && this.generating) {
+                        try {
+                            const response = await fetch(`/api/v1/task/${this.taskId}`);
+                            const data = await response.json();
+                            
+                            this.progress = data.progress * 100;
+                            this.generationStatus = `Status: ${data.status}`;
+                            
+                            if (data.status === 'completed' && data.result?.image_url) {
+                                this.currentImage = data.result.image_url;
+                                this.addToHistory(data.result.image_url, this.prompt);
+                                this.showToast('Image generated successfully!', '✨', 'success');
+                                break;
+                            }
+                            
+                            if (data.status === 'failed') {
+                                throw new Error(data.error || 'Generation failed');
+                            }
+                            
+                            this.progress = Math.min(this.progress + 5, 95);
+                            
+                        } catch (error) {
+                            console.error('Polling error:', error);
+                        }
+                        
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        attempts++;
+                    }
+                    
+                    this.generating = false;
+                },
+                
+                addToHistory(url, prompt) {
+                    this.history.unshift({
+                        id: Date.now(),
+                        url: url,
+                        prompt: prompt,
+                        timestamp: new Date().toISOString(),
+                    });
+                },
+                
+                selectHistory(item) {
+                    this.currentImage = item.url;
+                    this.prompt = item.prompt;
+                    this.showHistory = false;
+                },
+                
+                regenerate() {
+                    if (this.prompt) {
+                        this.generateImage();
+                    }
+                },
+                
+                createVariation() {
+                    this.seed = Math.floor(Math.random() * 2147483647);
+                    this.generateImage();
+                },
+                
+                downloadImage() {
+                    if (this.currentImage) {
+                        const link = document.createElement('a');
+                        link.href = this.currentImage;
+                        link.download = `ai-image-${Date.now()}.jpg`;
+                        link.click();
+                        this.showToast('Download started', '📥', 'success');
+                    }
+                },
+                
+                usePrompt(prompt) {
+                    this.prompt = prompt;
+                    document.getElementById('generate').scrollIntoView({ behavior: 'smooth' });
+                },
+                
+                loadMore() {
+                    // Load more gallery items
+                    this.showToast('Loading more...', '⏳', 'info');
+                },
+                
+                startWebSocket() {
+                    // WebSocket connection for real-time updates
+                    const ws = new WebSocket(`ws://${window.location.host}/ws/updates`);
+                    
+                    ws.onopen = () => {
+                        console.log('WebSocket connected');
+                    };
+                    
+                    ws.onmessage = (event) => {
+                        const data = JSON.parse(event.data);
+                        // Handle real-time updates
+                    };
+                    
+                    ws.onerror = (error) => {
+                        console.log('WebSocket error:', error);
+                    };
+                },
+                
+                showToast(message, icon = 'ℹ️', type = 'info') {
+                    const id = Date.now();
+                    this.toasts.push({ id, message, icon, type });
+                    
+                    setTimeout(() => {
+                        this.toasts = this.toasts.filter(t => t.id !== id);
+                    }, 3000);
+                },
+            }
+        }
+    </script>
+</body>
+</html>
