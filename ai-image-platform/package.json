@@ -1,0 +1,28 @@
+{
+  "name": "ai-image-platform",
+  "version": "1.0.0",
+  "description": "Premium AI Image Generation Platform with Telegram Bot",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend",
+    "telegram-bot",
+    "proxy-scraper"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\" \"npm run dev:bot\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:bot": "cd telegram-bot && npm run dev",
+    "build": "npm run build:frontend && npm run build:backend",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cd backend && npm run build",
+    "start": "concurrently \"npm run start:backend\" \"npm run start:bot\"",
+    "start:backend": "cd backend && npm start",
+    "start:bot": "cd telegram-bot && npm start",
+    "proxy:scraper": "cd proxy-scraper && npm start"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
