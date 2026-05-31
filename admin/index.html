@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - AI Companion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/admin.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-card">
+            <h1>Admin Panel</h1>
+            <p>AI Companion Administration</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="username" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+                <p id="loginError" class="error-message hidden"></p>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Admin Dashboard -->
+    <div id="adminPanel" class="admin-panel hidden">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <h2>🛡️ Admin</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-page="dashboard">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="#" class="nav-item" data-page="providers">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                    Providers
+                </a>
+                <a href="#" class="nav-item" data-page="prompts">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    Prompts
+                </a>
+                <a href="#" class="nav-item" data-page="memories">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                    Memories
+                </a>
+                <a href="#" class="nav-item" data-page="chats">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    Chats
+                </a>
+                <a href="#" class="nav-item" data-page="backups">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                    </svg>
+                    Backups
+                </a>
+                <a href="#" class="nav-item" data-page="logs">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                    Logs
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="/" class="nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    Back to Chat
+                </a>
+                <button id="logoutBtn" class="nav-item btn-logout">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    Logout
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <h1 id="pageTitle">Dashboard</h1>
+                <div class="header-actions">
+                    <span id="adminUsername" class="admin-info"></span>
+                </div>
+            </header>
+            
+            <!-- Dashboard Page -->
+            <div id="page-dashboard" class="admin-page active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">💬</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="totalChats">0</div>
+                            <div class="stat-label">Total Chats</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">✉️</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="totalMessages">0</div>
+                            <div class="stat-label">Total Messages</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🧠</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="totalMemories">0</div>
+                            <div class="stat-label">Total Memories</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💾</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="storageUsage">0 B</div>
+                            <div class="stat-label">Storage Used</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-sections">
+                    <div class="card">
+                        <h3>Recent Activity</h3>
+                        <div id="recentChats" class="list-container">
+                            <!-- Recent chats will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>Active Providers</h3>
+                        <div id="activeProviders" class="list-container">
+                            <!-- Active providers will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>AI Configuration</h3>
+                        <div id="aiConfigSummary" class="config-summary">
+                            <!-- AI config summary will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Providers Page -->
+            <div id="page-providers" class="admin-page">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>API Providers</h3>
+                        <button id="addProviderBtn" class="btn btn-primary">Add Provider</button>
+                    </div>
+                    <div id="providersList" class="table-container">
+                        <!-- Providers table will be rendered here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Prompts Page -->
+            <div id="page-prompts" class="admin-page">
+                <div class="card">
+                    <h3>System Prompts</h3>
+                    <form id="promptsForm">
+                        <div class="form-group">
+                            <label>Master System Prompt</label>
+                            <textarea id="masterPrompt" rows="4" placeholder="Master instructions that apply to all conversations..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Default System Prompt</label>
+                            <textarea id="systemPrompt" rows="4" placeholder="Default system prompt with placeholders {{name}}, {{personality}}, {{tone}}..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Memory Instructions</label>
+                            <textarea id="memoryPrompt" rows="3" placeholder="Instructions for memory handling..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Temperature</label>
+                            <input type="number" id="temperature" step="0.1" min="0" max="2" value="0.7">
+                        </div>
+                        <div class="form-group">
+                            <label>Max Tokens</label>
+                            <input type="number" id="maxTokens" value="2048">
+                        </div>
+                        <div class="form-group">
+                            <label>Context Length</label>
+                            <input type="number" id="contextLength" value="4096">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Prompts</button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Memories Page -->
+            <div id="page-memories" class="admin-page">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>All Memories</h3>
+                        <div class="search-box">
+                            <input type="text" id="memorySearchInput" placeholder="Search memories...">
+                        </div>
+                    </div>
+                    <div id="memoriesTable" class="table-container">
+                        <!-- Memories table will be rendered here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chats Page -->
+            <div id="page-chats" class="admin-page">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>All Conversations</h3>
+                        <div class="search-box">
+                            <input type="text" id="chatSearchInput" placeholder="Search chats...">
+                        </div>
+                    </div>
+                    <div id="chatsTable" class="table-container">
+                        <!-- Chats table will be rendered here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Backups Page -->
+            <div id="page-backups" class="admin-page">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Backups</h3>
+                        <button id="createBackupBtn" class="btn btn-primary">Create Backup</button>
+                    </div>
+                    <div id="backupsTable" class="table-container">
+                        <!-- Backups table will be rendered here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Logs Page -->
+            <div id="page-logs" class="admin-page">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>System Logs</h3>
+                        <button id="clearLogsBtn" class="btn btn-secondary">Clear Logs</button>
+                    </div>
+                    <div id="logsContainer" class="logs-container">
+                        <!-- Logs will be displayed here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Provider Modal -->
+    <div id="providerModal" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2 id="providerModalTitle">Add Provider</h2>
+                <button class="btn-icon modal-close">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="providerForm">
+                    <input type="hidden" id="providerId">
+                    <div class="form-group">
+                        <label>Provider ID</label>
+                        <input type="text" id="providerIdInput" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Provider Name</label>
+                        <input type="text" id="providerNameInput" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Base URL</label>
+                        <input type="url" id="providerUrlInput" required>
+                    </div>
+                    <div class="form-group">
+                        <label>API Key</label>
+                        <input type="password" id="providerApiKeyInput">
+                    </div>
+                    <div class="form-group">
+                        <label>Models (comma-separated)</label>
+                        <textarea id="providerModelsInput" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Enabled</label>
+                        <label class="switch">
+                            <input type="checkbox" id="providerEnabledInput" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="testProviderBtn" class="btn btn-secondary">Test Connection</button>
+                <button id="saveProviderBtn" class="btn btn-primary">Save Provider</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/assets/js/admin.js"></script>
+</body>
+</html>

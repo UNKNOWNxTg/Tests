@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Companion - Premium Chat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body class="dark-mode">
+    <div id="app" class="app-container">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <button id="newChatBtn" class="btn btn-primary btn-full">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    New Chat
+                </button>
+                <button id="toggleSidebar" class="btn-icon mobile-only">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="search-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="chatSearch" placeholder="Search conversations...">
+            </div>
+            
+            <div id="chatList" class="chat-list">
+                <!-- Chats will be loaded here -->
+            </div>
+            
+            <div class="sidebar-footer">
+                <button id="memoryBtn" class="btn btn-ghost btn-full">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                    Memories
+                </button>
+                <button id="settingsBtn" class="btn btn-ghost btn-full">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                    Settings
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main Chat Area -->
+        <main id="mainChat" class="main-chat">
+            <header class="chat-header">
+                <button id="menuToggle" class="btn-icon desktop-hide">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                
+                <div class="chat-header-info">
+                    <div class="ai-avatar" id="headerAvatar">
+                        <span>L</span>
+                    </div>
+                    <div class="chat-header-text">
+                        <h2 id="chatTitle">New Conversation</h2>
+                        <p id="aiName" class="ai-status">Luna • Online</p>
+                    </div>
+                </div>
+                
+                <div class="chat-header-actions">
+                    <button id="pinChatBtn" class="btn-icon" title="Pin chat">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="17" x2="12" y2="22"></line>
+                            <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"></path>
+                        </svg>
+                    </button>
+                    <button id="renameChatBtn" class="btn-icon" title="Rename chat">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                    </button>
+                    <button id="deleteChatBtn" class="btn-icon" title="Delete chat">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+            
+            <div id="chatContainer" class="chat-container">
+                <div id="messages" class="messages">
+                    <div class="welcome-message">
+                        <div class="ai-avatar large" id="welcomeAvatar">
+                            <span>L</span>
+                        </div>
+                        <h2>Welcome to AI Companion</h2>
+                        <p>Start a conversation with your personalized AI assistant.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="input-area">
+                <div class="input-container">
+                    <div class="input-wrapper">
+                        <textarea id="messageInput" placeholder="Type your message..." rows="1"></textarea>
+                        <div class="input-actions">
+                            <button id="stopBtn" class="btn-icon hidden" title="Stop generating">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <rect x="6" y="6" width="12" height="12" rx="2"></rect>
+                                </svg>
+                            </button>
+                            <button id="sendBtn" class="btn btn-primary" title="Send message">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="input-hint">AI can make mistakes. Consider checking important information.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="btn-icon modal-close">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="tabs">
+                    <button class="tab active" data-tab="appearance">Appearance</button>
+                    <button class="tab" data-tab="ai-config">AI Configuration</button>
+                    <button class="tab" data-tab="data">Data</button>
+                </div>
+                
+                <div class="tab-content active" id="appearanceTab">
+                    <div class="settings-section">
+                        <h3>Theme</h3>
+                        <div class="setting-row">
+                            <label>Dark Mode</label>
+                            <label class="switch">
+                                <input type="checkbox" id="darkModeToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-row">
+                            <label>AMOLED Black</label>
+                            <label class="switch">
+                                <input type="checkbox" id="amoledToggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-row">
+                            <label>Glassmorphism</label>
+                            <label class="switch">
+                                <input type="checkbox" id="glassToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3>Accent Color</h3>
+                        <div class="color-picker">
+                            <input type="color" id="accentColor" value="#6366f1">
+                            <div class="color-presets">
+                                <button class="color-preset" data-color="#6366f1"></button>
+                                <button class="color-preset" data-color="#8b5cf6"></button>
+                                <button class="color-preset" data-color="#ec4899"></button>
+                                <button class="color-preset" data-color="#14b8a6"></button>
+                                <button class="color-preset" data-color="#f59e0b"></button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3>Background</h3>
+                        <div class="setting-row">
+                            <label>Background Type</label>
+                            <select id="backgroundType">
+                                <option value="color">Solid Color</option>
+                                <option value="gradient">Gradient</option>
+                                <option value="image">Custom Image</option>
+                            </select>
+                        </div>
+                        <div class="setting-row" id="imageUploadRow" style="display:none;">
+                            <input type="file" id="backgroundImage" accept="image/*">
+                        </div>
+                        <div class="setting-row">
+                            <label>Blur Amount</label>
+                            <input type="range" id="backgroundBlur" min="0" max="20" value="0">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="aiConfigTab">
+                    <div class="settings-section">
+                        <h3>AI Identity</h3>
+                        <div class="setting-row">
+                            <label>Name</label>
+                            <input type="text" id="aiNameInput" placeholder="AI Name">
+                        </div>
+                        <div class="setting-row">
+                            <label>Avatar URL</label>
+                            <input type="text" id="aiAvatarInput" placeholder="Image URL">
+                        </div>
+                        <div class="setting-row">
+                            <label>Personality</label>
+                            <select id="aiPersonality">
+                                <option value="caring">Caring</option>
+                                <option value="playful">Playful</option>
+                                <option value="romantic">Romantic</option>
+                                <option value="protective">Protective</option>
+                                <option value="possessive">Possessive</option>
+                                <option value="friendly">Friendly</option>
+                                <option value="supportive">Supportive</option>
+                            </select>
+                        </div>
+                        <div class="setting-row">
+                            <label>Communication Style</label>
+                            <select id="aiCommunicationStyle">
+                                <option value="casual">Casual</option>
+                                <option value="formal">Formal</option>
+                                <option value="poetic">Poetic</option>
+                                <option value="direct">Direct</option>
+                            </select>
+                        </div>
+                        <div class="setting-row">
+                            <label>Tone</label>
+                            <select id="aiTone">
+                                <option value="warm">Warm</option>
+                                <option value="neutral">Neutral</option>
+                                <option value="enthusiastic">Enthusiastic</option>
+                                <option value="calm">Calm</option>
+                            </select>
+                        </div>
+                        <div class="setting-row full-height">
+                            <label>Biography</label>
+                            <textarea id="aiBiography" rows="3" placeholder="Describe your AI's background..."></textarea>
+                        </div>
+                        <div class="setting-row full-height">
+                            <label>Background Story</label>
+                            <textarea id="aiBackgroundStory" rows="3" placeholder="Add a backstory..."></textarea>
+                        </div>
+                        <div class="setting-row full-height">
+                            <label>Custom Instructions</label>
+                            <textarea id="aiCustomPrompts" rows="3" placeholder="Additional instructions for the AI..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="dataTab">
+                    <div class="settings-section">
+                        <h3>Data Management</h3>
+                        <div class="setting-row">
+                            <button id="exportDataBtn" class="btn btn-secondary">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                Export All Data
+                            </button>
+                        </div>
+                        <div class="setting-row">
+                            <button id="importDataBtn" class="btn btn-secondary">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                                Import Data
+                            </button>
+                            <input type="file" id="importFile" accept=".json" style="display:none;">
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3>Danger Zone</h3>
+                        <div class="setting-row">
+                            <button id="clearMemoriesBtn" class="btn btn-danger">Clear All Memories</button>
+                        </div>
+                        <div class="setting-row">
+                            <button id="deleteAllChatsBtn" class="btn btn-danger">Delete All Chats</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="saveSettingsBtn" class="btn btn-primary">Save Changes</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Memory Modal -->
+    <div id="memoryModal" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>Memory Bank</h2>
+                <button class="btn-icon modal-close">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="search-box mb-4">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="memorySearch" placeholder="Search memories...">
+                </div>
+                <div id="memoryList" class="memory-list">
+                    <!-- Memories will be loaded here -->
+                </div>
+                <button id="addMemoryBtn" class="btn btn-primary btn-full mt-4">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Add Manual Memory
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Message Actions Menu -->
+    <div id="messageMenu" class="message-menu hidden">
+        <button class="menu-item" data-action="copy">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            Copy
+        </button>
+        <button class="menu-item" data-action="edit">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            Edit
+        </button>
+        <button class="menu-item" data-action="regenerate">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+            </svg>
+            Regenerate
+        </button>
+        <button class="menu-item" data-action="delete">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            Delete
+        </button>
+    </div>
+    
+    <!-- Rename Chat Modal -->
+    <div id="renameModal" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2>Rename Chat</h2>
+                <button class="btn-icon modal-close">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="renameInput" class="input-full" placeholder="Enter new name...">
+            </div>
+            <div class="modal-footer">
+                <button id="confirmRenameBtn" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Memory Modal -->
+    <div id="addMemoryModal" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2>Add Memory</h2>
+                <button class="btn-icon modal-close">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <textarea id="newMemoryContent" class="input-full" rows="4" placeholder="What should the AI remember?"></textarea>
+                <select id="newMemoryType" class="mt-4">
+                    <option value="general">General</option>
+                    <option value="personal">Personal</option>
+                    <option value="preference">Preference</option>
+                    <option value="important">Important</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button id="confirmAddMemoryBtn" class="btn btn-primary">Add Memory</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/assets/js/app.js"></script>
+</body>
+</html>
